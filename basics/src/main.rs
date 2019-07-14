@@ -7,6 +7,7 @@ fn main() {
 	array_and_slices();
 	slicing_and_dicing();
 	vectors();
+	iterators();
 }
 
 fn hello_world() {
@@ -231,3 +232,89 @@ fn vectors_and_slices() {
 	let slice = &v[1..];
 	println!("Slice is {:?}", slice);
 }
+
+fn  iterators() {
+	basic_iterators();
+	array_iterate();
+	idiomatic_sum();
+	window_slices_and_chunks();
+	more_vectors();
+}
+
+fn basic_iterators() {
+	let mut iter = 0..3;
+	println!("Making assertions.");
+	assert_eq!(iter.next(), Some(0));
+	assert_eq!(iter.next(), Some(1));
+	assert_eq!(iter.next(), Some(2));
+	assert_eq!(iter.next(), None);
+	println!("Done with assertions!");
+}
+
+fn array_iterate() {
+	// below fails because array are not iterators
+	// let arr = [10,20,30];
+	// for i in arr {
+	//	println!("{}", i)
+	//}
+
+	// but slices are!
+	let arr_sliced = &[10,20,30];
+	for i in arr_sliced {
+		println!("{}", i);
+	}
+}
+
+fn idiomatic_sum() {
+	let sum: i32 = (0..5).sum();
+	println!("Sum is {}", sum);
+	let sum: i64 = [0, 10, 15].iter().sum();
+	println!("Sum is {}", sum);
+}
+
+fn window_slices_and_chunks() {
+	let slice = &[1,2,3,4,5];
+
+	for s in slice.windows(2) {
+		println!("window {:?}", s);
+	}
+
+	for c in slice.chunks(2) {
+		println!("chunk {:?}", c);
+	}
+}
+
+fn more_vectors() {
+	vector_bang();
+}
+
+fn vector_bang() {
+	let mut v = vec![1,2,3,4,5];
+	v.pop(); // remove the 5
+
+	let mut v2 = Vec::new();
+	v2.push(1);
+	v2.push(2);
+	v2.push(3);
+	v2.push(4);
+
+	assert_eq!(v, v2);
+
+	let v3 = vec![1,2,3];
+	let mut v4 = vec![];
+	v4.extend([1].iter());
+	v4.extend([2].iter());
+	v4.extend(3..4);
+
+	assert_eq!(v3, v4);
+
+	let mut v5 = vec![1,2,3,4,1,2,3,4,1,2,3,4,1,2,3,4];
+	v5.sort();
+	assert_eq!(v5, &[1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4]);
+	v5.dedup();
+	assert_eq!(v5, &[1,2,3,4]);
+
+
+}
+
+

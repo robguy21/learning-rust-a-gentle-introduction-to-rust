@@ -8,6 +8,7 @@ fn main() {
 	slicing_and_dicing();
 	vectors();
 	iterators();
+	strings();
 }
 
 fn hello_world() {
@@ -317,4 +318,88 @@ fn vector_bang() {
 
 }
 
+fn strings() {
+	basic_strings();
+	push_pop_strings();
+	array_to_string();
+	string_slicing();
+	an_exercise_in_utf8();
+	string_collection();
+}
 
+fn basic_strings() {
+	let text = "hello world"; // a string slice
+	let s = text.to_string(); // allocated strings
+	println!("str '{}'", text);
+	println!("str '{}'", s);
+}
+
+fn push_pop_strings() {
+	let mut s = String::new();
+	s.push('H');
+	s.push_str("ello");
+	s.push(' ');
+	s += "World!"; // short hand of push_str
+	s.pop();
+	assert_eq!(s, "Hello World");
+}
+
+fn array_to_string() {
+	let input = [1,2,3,4];
+	let result = string_to_array(&input);
+	println!("Array was {:?}, String is {}", input, result);
+}
+
+fn string_to_array(arr: &[i32]) -> String {
+	let mut s = '['.to_string(); // allocated string
+
+	for i in arr {
+		s += &i.to_string();
+		s.push(',');
+	}
+	s.pop(); // remove trailing comma
+	s.push(']');
+	s
+}
+
+fn string_slicing() {
+	let text = "static";
+	let string = "dynamic!".to_string();
+
+	let text_slice = &text[1..];
+	let string_slice = &string[2..4];
+	println!("Text Slice: {} | String Slice : {}", text_slice, string_slice);
+}
+
+fn an_exercise_in_utf8() {
+	let multi = "Hi! ¡Hola! привет!";
+	for ch in multi.chars() {
+		print!("'{}'", ch);
+	}
+
+	println!("");
+	println!("len {}", multi.len()); // count length of string
+	println!("count {}", multi.chars().count()); // count length of characters
+
+	let maybe = multi.find('п');
+	if maybe.is_some() {
+		let hi = &multi[maybe.unwrap()..];
+		println!("Russian hi {}", hi);
+	}
+}
+
+fn string_collection() {
+	let text1 = "the red fox jumps over the lazy dog";
+	let words1: Vec<&str> = text1.split_whitespace().collect();
+	println!("Words 1 ... {:?}", words1);
+
+	let text2 = "the grumpy man shouts at the youngsters";
+	let mut words2 = Vec::new();
+	words2.extend(text2.split_whitespace());
+	println!("Words 2 ... {:?}", words2);
+
+	let stripped: String = text2.chars()
+		.filter(|ch| ! ch.is_whitespace())
+		.collect();
+	println!("Stripped ... {:?}", stripped);
+}

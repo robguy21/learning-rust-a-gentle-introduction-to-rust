@@ -1,3 +1,4 @@
+use std::env;
 // following along with https://stevedonovan.github.io/rust-gentle-intro/1-basics.html
 fn main() {
 	hello_world();
@@ -9,6 +10,7 @@ fn main() {
 	vectors();
 	iterators();
 	strings();
+	command_line_args();
 }
 
 fn hello_world() {
@@ -403,3 +405,44 @@ fn string_collection() {
 		.collect();
 	println!("Stripped ... {:?}", stripped);
 }
+
+fn command_line_args() {
+	command_line_args_string();
+	command_line_args_vector();
+	command_line_args_rusty();
+}
+
+fn command_line_args_string() {
+	println!("---------------------------------");
+	println!("Command line Arguments as Strings");
+	println!("---------------------------------");
+	let args = env::args();
+	for arg in args {
+		println!("'{}'", arg);
+	}
+	println!("----------------------");
+}
+
+fn command_line_args_vector() {
+	println!("---------------------------------");
+	println!("Command line Arguments as Vector");
+	println!("---------------------------------");
+	let args: Vec<String> = env::args().skip(1).collect();
+	if args.len() > 1 {
+		for arg in args {
+			println!("'{}'", arg);
+		}
+	}
+	println!("----------------------");
+}
+
+fn command_line_args_rusty() {
+	println!("---------------------------------");
+	println!("Command line Arguments Rusty-like");
+	println!("---------------------------------");
+	let first = env::args().nth(1).expect("Please supply an argument");
+	let force_int: i32 = first.parse().expect("Not an integer!?");
+	println!("{}", force_int);
+	println!("----------------------");
+}
+

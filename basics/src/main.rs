@@ -1,4 +1,8 @@
 use std::env;
+use std::io;
+use std::fs::File;
+use std::io::Read;
+
 // following along with https://stevedonovan.github.io/rust-gentle-intro/1-basics.html
 fn main() {
 	hello_world();
@@ -11,6 +15,9 @@ fn main() {
 	iterators();
 	strings();
 	command_line_args();
+	matching();
+	read_from_file();
+	good_or_bad_call();
 }
 
 fn hello_world() {
@@ -446,3 +453,99 @@ fn command_line_args_rusty() {
 	println!("----------------------");
 }
 
+fn matching() {
+	multilingual_with_match();
+}
+
+fn multilingual_with_match() {
+	let multi = "Hi! ¡Hola! привет!";
+	match multi.find('r') {
+		Some(idx) => {
+			let hi = &multi[idx..];
+			println!("Russian hi {}", hi);
+		},
+		None => println!("Couldn't find nuthin'")
+	}
+
+	// or a one liner
+	if let Some(idx) = multi.find('п') {
+		println!("Russian hi is {}", &multi[idx..]);
+	}
+
+	// match as switch
+	let n = 3;
+	let text = match n {
+		0 => "zero",
+		1 => "one",
+		2 => "two",
+		3...10 => "between 3 and 10",
+		_ => "none",
+	};
+	println!("Match as a switch returns - {}", text);
+}
+
+fn read_from_file() {
+	let fname = "text.txt";
+	read_from_file_throw_away_errors(&fname);
+	read_from_files_handle_all_errors(&fname);
+	read_from_files_magic_question(&fname);
+}
+
+fn read_from_file_throw_away_errors(fname: &str) { // bad!
+	// this function throws away errors and causes the programme to panic
+	// *this is not ideal*
+	let mut file = File::open(&fname).expect("Can't open the file");
+	let mut text = String::new();
+	file.read_to_string(&mut text).expect("Can't read the file");
+	println!("File had {} bytes", text.len());
+}
+
+fn read_to_string(filename: &str) -> Result<String, io::Error> {
+	let mut file = match File::open(&filename) {
+		Ok(f) => f,
+		Err(e) => return Err(e),
+	};
+
+	let mut text = String::new();
+	match file.read_to_string(&mut text) {
+		Ok(_) => Ok(text.to_string()),
+		Err(e) => Err(e),
+	}
+}
+
+fn read_to_string_question_return(filename: &str) -> io::Result<String> {
+	let mut file = File::open(&filename)?; // will return this error
+	let mut text = String::new();
+	file.read_to_string(&mut text)?; // will return this error
+	Ok(text)
+}
+
+fn read_from_files_handle_all_errors(file: &str) { // better
+	let text = read_to_string(&file).expect("Bad file");
+	println!("File had {} bytes", text.len());
+}
+
+fn read_from_files_magic_question(filename: &str) { // rust-y level!
+	let text = read_to_string_question_return(&filename).expect("Bad file");
+	println!("File had {} bytes", text.len());
+}
+
+fn good_or_bad(good: bool) -> Result<i32, String> {
+	if good {
+		Ok(42)
+	} else {
+		Err("Is not good".to_string())
+	}
+}
+
+fn good_or_bad_call() {
+	match good_or_bad(true) {
+		Ok(e) => println!("Yay - the answer is {}", e),
+		Err(t) => println!("No - got {}", t),
+	};
+
+	match good_or_bad(false) {
+		Ok(e) => println!("Yay - the answer is {}", e),
+		Err(t) => println!("No - got {}", t),
+	};
+}
